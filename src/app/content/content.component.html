@@ -1,0 +1,3 @@
+<app-buttons (loginClick)="atLogin()" (logoutClick)="atLogout()" />
+<app-welcome-content *ngIf="componentToShow == 'welcome'" />
+<app-login-form *ngIf="componentToShow == 'login'" />
