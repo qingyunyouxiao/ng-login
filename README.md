@@ -51,7 +51,7 @@ export class AppComponent {
 }
 ```
 
-在这个例子中，当代码片段呈现到页面时，Angular 将替换 {{ theme }} 为 dark。
+在这个例子中，当代码片段呈现到页面时，Angular 将替换 {{ theme }} 为 dark。关于组件导入的[更多内容。](https://angular.dev/guide/components)
 
 ```
 <!-- Rendered Output -->
@@ -97,19 +97,99 @@ export class HelloWorldDependencyInjectionComponent  {
 }
 ```
 
-## 创建组件
+## CLI命令
+
+Angular CLI是一个命令行界面工具，它自动化特定的开发任务，如服务、构建、打包、更新和测试Angular项目。顾名思义，它使用命令行调用ng可执行文件并使用以下语法运行命令：
+
+```
+ng [command] [options]
+```
+
+在这里，[command]是要执行的命令的名称，而[options]表示可以传递给每个命令的附加参数。要查看所有可用的命令，可以运行以下命令：
+
+```
+ng help
+```
+
+创建包含 Angular 应用程序的新文件。
 
 ```
 ng generate compoment your-compoment
 ```
 
+启动项目。
+
+```
+ng serve
+```
+
+## 组件结构
+
+组件的 TypeScript 类定义在 app.component.ts 文件中：
+
+```ts
+import { Component } from '@angular/core';
+import { HeaderComponent } from './header/header.component';
+import { ContentComponent } from './content/content.component';
+
+@Component({
+  selector: 'app-root',
+  imports: [HeaderComponent,ContentComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+  title = 'angular-app';
+}
+```
+
+@Component是一个Angular装饰器，用于定义Angular组件的属性。Angular装饰器是一个接受带有元数据对象作为参数的方法。元数据用于使用以下属性将TypeScript类配置为Angular组件：
+
+• selector：一个CSS选择器，指示Angular在HTML模板中找到相应标签的位置加载组件。Angular CLI默认添加app前缀，但您可以在创建Angular项目时使用--prefix选项自定义它。
+
+• imports：定义组件需要加载的Angular文物列表，以便正确加载，例如其他Angular组件。Angular CLI默认在主应用程序组件中添加RouterOutlet。RouterOutlet用于在Angular应用程序中需要路由能力时使用。
+
+• templateUrl：定义包含组件HTML模板的外部HTML文件的路径。或者，您可以使用template属性提供内联模板。
+
+• styleUrl：定义包含组件CSS样式的外部CSS样式表文件的路径。或者，您可以使用styles属性提供内联样式。
+
 ## 添加静态文件
 
-在本项目代码中，angular.png图标文件储存在
+在本项目代码中，angular.png图标文件储存在 /src/assets中，需要创建并修改angular.json。
 
+```html
+<app-header
+[title]="'The Frontend Project'"
+[logopath]="'assets/angular.png'"
+/>
+<app-content/>
+```
 
+```json
+    "assets": [
+        "src/assets",
+    ],
+    "styles": [
+      "src/styles.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+```
 
+## 内容显示
 
+```ts
+export class ContentComponent {
+
+  componentToShow = "welcome";
+    atLogin() {
+      this.componentToShow = "login";
+    }
+    atLogout() {
+      this.componentToShow = "welcome";
+    }
+}
+
+```
 
 ```html
 <app-buttons (loginClick)="atLogin()" (logoutClick)="atLogout()" />
@@ -118,6 +198,37 @@ ng generate compoment your-compoment
 ```
 
 关于ngIf的[用法](https://v16.angular.io/api/common/NgIf#description)，注意大小写。
+
+## 来自组件的父方法
+
+```ts
+import { Component, Output, EventEmitter } from '@angular/core';
+
+@Component({
+  selector: 'app-buttons',
+  imports: [],
+  templateUrl: './buttons.component.html',
+  styleUrl: './buttons.component.css'
+})
+export class ButtonsComponent {
+
+  @Output() loginClick=new EventEmitter();
+  @Output() logoutClick=new EventEmitter();
+  
+
+}
+```
+
+将按钮绑定到事件的方法。
+
+```html
+<div class="row">
+    <div class="col-md-12 text-center" style="margin-top: 30px;">
+        <button class="btn btn-primary" style="margin: 10px;" (click)="loginClick.emit()">Login</button>
+        <button class="btn btn-dark" style="margin: 10px;" (click)="logoutClick.emit()">Logout</button>
+    </div>
+</div>
+```
 
 ## 创建后端
 
